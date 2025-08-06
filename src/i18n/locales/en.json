@@ -1,0 +1,37 @@
+{
+  "navigation": {
+    "firstDiary": "First Diary",
+    "secondDiary": "Second Diary",
+    "settings": "Settings",
+    "about": "About",
+    "back": "Back"
+
+  },
+  "settings": {
+    "English": "English",
+    "Hebrew": "עברית"
+  },
+
+  "diary": {
+    "events list": "Events List",
+    "no events found.": "No events found.",
+    "click Add Event to get started.":"Click Add Event to get started."
+  },
+  "case": {
+    "description": "Description",
+    "thought": "Thought",
+    "emotions display": "Emotions display",
+    "emotions": "Emotions",
+    "behavior": "Behavior",
+    "symptoms": "Symptoms",
+
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+
+  }
+
+}
+
+
