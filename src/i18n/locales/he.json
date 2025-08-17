@@ -1,3 +1,76 @@
 {
 
+  "navigation": {
+    "firstDiary": "יומן ראשון",
+    "secondDiary": "יומן שני",
+    "settings": "הגדרות",
+    "about": "אודות",
+    "back": "חזור"
+  },
+
+  "settings": {
+    "English": "אנגלית",
+    "Hebrew": "עברית",
+    "diaryToClear": "בחר יומן להסרה",
+    "clear Diary": "הסר יומן",
+    "ok": "אישור",
+    "cases cleared": "יומן הוסר בהצלחה"
+  },
+
+  "about": {
+    "infoHeading": "יעל צ'פאל - מאמנת רגשית ומטפלת מוסמכת בגישת NLP ו LICBT",
+    "infoText": "בעלת קליניקה פרטית המתמחה בהתמודדות עם חרדה, ויסות רגשי, מעברים בחיים והעצמה אישית.\nמרצה מוסמכת ל־NLP במסלולי הכשרה מקצועיים.\nמעבירה סדנאות והרצאות לקהלים מגוונים.\n",
+    "phoneNumber": "טלפון נייד",
+    "email": "אימייל",
+    "instagram": "אינסטגרם"
+  },
+
+  "diary": {
+    "events list": "אירועים",
+    "no events found.": "לא אותרו אירועים",
+    "click Add Event to get started.":"Click Add Event to get started."
+  },
+
+  "case": {
+    "description": "תאור",
+    "thought": "מחשבות",
+    "emotions display": "תצוגת רגשות",
+    "emotions": "רגשות",
+    "behavior": "התנהגויות",
+    "symptoms": "סימפטומים",
+
+    "actions": {
+      "edit": "ערוך",
+      "delete": "הסר"
+    }
+
+  },
+
+  "editCase": {
+    "editing event": "עריכת אירוע",
+
+    "event name is a required field": "שם האירוע הוא שדה חובה",
+    "event name": "שם האירוע",
+    "date": "תאריך",
+    "event date": "תאריך אירוע",
+    "thought" : "מחשבה",
+    "emotions selection": "בחירת רגשות",
+    "behavior": "התנהגויות",
+    "symptoms": "סימפטומים",
+    "save": "שמירה"
+  },
+
+  "emotionsSelector": {
+    "emotions": "רגשות",
+    "choose an emotion": "בחר רגש...",
+    "search": "חיפוש..."
+  },
+
+  "emotionCard": {
+    "no emotions text": "לא נשמרו רגשות. הגדר רגשות לאירוע במסך העריכה."
+  }
+
 }
+
+
+

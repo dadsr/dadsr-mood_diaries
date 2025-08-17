@@ -9,16 +9,18 @@ const resources = {
     he: { translation: translationHe },
 };
 
-const locale =
+const deviceLocale =
     Localization.getLocales && Localization.getLocales().length > 0
         ? Localization.getLocales()[0].languageTag
         : 'en';
+
+console.log("📱 Device locale detected:", deviceLocale);
 
 i18n
     .use(initReactI18next)
     .init({
         resources,
-        // lng: locale,
+        lng: deviceLocale,
         fallbackLng: 'en',
         debug: true,
 
@@ -26,10 +28,14 @@ i18n
             escapeValue: false
         },
 
-        returnEmptyString: false,
+        returnEmptyString: false, // Return key instead of empty string for missing translations
+
         react: {
             useSuspense: false,
         },
+
     });
+
+console.log("🌐 i18n initialized with fallback language:", i18n.language);
 
 export default i18n;

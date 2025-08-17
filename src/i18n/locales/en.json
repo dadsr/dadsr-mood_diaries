@@ -5,18 +5,31 @@
     "settings": "Settings",
     "about": "About",
     "back": "Back"
-
   },
+
   "settings": {
     "English": "English",
-    "Hebrew": "עברית"
+    "Hebrew": "Hebrew",
+    "diaryToClear": "Select Diary to Clear",
+    "clear Diary": "Clear Diary",
+    "ok": "OK",
+    "cases cleared": " Diary cleared successfully"
+  },
+
+  "about": {
+    "infoHeading": "Yael Chapal - Emotional Coach and Certified Therapist in NLP and LICBT Approach",
+    "infoText": "Owner of a private clinic specializing in dealing with anxiety, emotional regulation, life transitions and personal empowerment.\nCertified NLP lecturer in professional training programs.\nConducts workshops and lectures for diverse audiences.\n",
+    "phoneNumber": "Mobile Phone",
+    "email": "Email",
+    "instagram": "Instagram"
   },
 
   "diary": {
     "events list": "Events List",
     "no events found.": "No events found.",
-    "click Add Event to get started.":"Click Add Event to get started."
+    "click Add Event to get started.": "Click Add Event to get started."
   },
+
   "case": {
     "description": "Description",
     "thought": "Thought",
@@ -29,9 +42,35 @@
       "edit": "Edit",
       "delete": "Delete"
     }
+  },
+
+  "editCase": {
+    "editing event": "Editing Event",
+    "event name is a required field": "Event name is a required field",
+    "event name": "Event Name",
+    "date": "Date",
+    "event date": "Event Date",
+    "thought": "Thought",
+    "emotions selection": "Emotions Selection",
+    "behavior": "Behavior",
+    "symptoms": "Symptoms",
+    "save": "Save",
+    "emotionsSelector": {
+      "emotions": "Emotions",
+      "choose an emotion": "choose an emotion...",
+      "search": "Search..."
+    },
+
+    "emotionsSelector": {
+      "emotions": "Emotions",
+      "choose an emotion": "choose an emotion...",
+      "search": "Search..."
+    },
+
+    "emotionCard": {
+      "no emotions text": "No emotions saved. Set emotions for the event in the edit screen."
+    }
 
   }
-
 }
-
 

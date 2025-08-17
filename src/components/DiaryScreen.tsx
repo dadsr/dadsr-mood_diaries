@@ -1,7 +1,7 @@
 import {JSX, useCallback, useState} from "react";
 import {FAB} from "react-native-paper";
 import {router, useFocusEffect} from "expo-router";
-import {SafeAreaView, ScrollView as DefaultScrollView, Text, View } from "react-native";
+import {I18nManager, SafeAreaView, ScrollView as DefaultScrollView, StyleSheet, Text, View} from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import services from "../services/Services";
 import {Case} from "../models/Case";
@@ -38,7 +38,7 @@ export default function DiaryScreen({ diary }: DiaryProps): JSX.Element {
 
 
     return (
-             <SafeAreaView  style = {[globalStyles.container, {
+             <SafeAreaView  style = {[styles.container, {
                 paddingTop: Math.max(insets.top + 8,20),
                 paddingBottom: Math.max(insets.bottom - 25,20)}]}>
 
@@ -48,12 +48,13 @@ export default function DiaryScreen({ diary }: DiaryProps): JSX.Element {
                     {cases.length > 0 ?(
                         cases.map(c => <CaseCard key={c.id} diary={diary} case={c} />)
                     ): (
-                        <View style = {globalStyles.card}>
-                            <Text style={globalStyles.text}>{t("diary.no events found.")}</Text>
-                            <Text style={globalStyles.text}>{t("diary.click Add Event to get started.")}</Text>
+                        <View style = {styles.noEventsContainer}>
+                            <Text style={styles.noEventsTextheader}>{t("diary.no events found.")}</Text>
+                            <Text style={styles.noEventsText}>{t("diary.click Add Event to get started.")}</Text>
                         </View>
                     )}
                 </DefaultScrollView >
+
                 <FAB
                     icon="plus"
                     color= "#fff"
@@ -62,9 +63,30 @@ export default function DiaryScreen({ diary }: DiaryProps): JSX.Element {
                     style={globalStyles.fab}
                 />
 
-
             </SafeAreaView >
     );
 
 }
 
+const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 20,
+        paddingVertical: 50,
+    },
+
+    noEventsContainer: {
+
+    },
+    noEventsTextheader: {
+        fontSize: 16,
+        lineHeight: 24,
+        marginBottom: 20,
+    },
+    noEventsText: {
+        fontSize: 16,
+        lineHeight: 24,
+        marginBottom: 20,
+    }
+
+
+});

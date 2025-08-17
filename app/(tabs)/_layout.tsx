@@ -4,9 +4,6 @@ import TabLabelTranslate from "../../src/components/tabs/TabLabelTranslate";
 
 export default function TabLayout() {
 
-
-
-
     return (
         <Tabs screenOptions={{ headerShown: false }}>
             <Tabs.Screen
@@ -32,6 +29,19 @@ export default function TabLayout() {
                     ),
                 }}
             />
+
+            <Tabs.Screen
+                name="about"
+                options={{
+                    tabBarLabel: (props) => (
+                        <TabLabelTranslate {...props} labelKey="navigation.about" />
+                    ),
+                    tabBarIcon: ({ color }) => (
+                        <MaterialIcons name="info" size={24} color={color} />
+                    ),
+                }}
+            />
+
 
         </Tabs>
     );
