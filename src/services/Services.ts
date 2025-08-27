@@ -2,13 +2,11 @@ import {Case} from "../models/Case";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     SerializedCase,
-    SerializedCounterConditioningThought,
     SerializedDistortionThought,
     SerializedEmotion
 } from "../models/Types";
 import {Emotion} from "../models/Emotion";
 import {DistortionThought} from "../models/DistortionThought";
-import {CounterConditioningThought} from "../models/CounterConditioningThought";
 
 
 export class Services {
@@ -33,8 +31,7 @@ export class Services {
                 caseInstance.symptoms = caseItem.symptoms;
                 caseInstance.distortions = caseItem.distortions?.map((e: SerializedDistortionThought) =>
                     new DistortionThought(e._distortion)) || [];
-                caseInstance.counterThoughts = caseItem.counterThoughts?.map((e: SerializedCounterConditioningThought) =>
-                    new CounterConditioningThought(e._counterThought)) || [];
+                caseInstance.counterThoughts = caseItem.counterThoughts;
                 return caseInstance;
             });
         }
@@ -67,9 +64,7 @@ export class Services {
                 distortions: updatedCase.distortions.map(e =>({
                     _distortion: e.getDistortion,
                 })),
-                counterThoughts: updatedCase.counterThoughts.map(e =>({
-                    _counterThought: e.getCounterThought,
-                })),
+                counterThoughts: updatedCase.counterThoughts,
                 caseDate: updatedCase.caseDate.toISOString()
             };
             const updatedCases = [...cases];
@@ -98,9 +93,7 @@ export class Services {
             distortions: newCase.distortions.map(e =>({
                 _distortion: e.getDistortion,
             })),
-            counterThoughts: newCase.counterThoughts.map(e =>({
-                _counterThought: e.getCounterThought,
-            })),
+            counterThoughts: newCase.counterThoughts,
             caseDate: newCase.caseDate.toISOString()
         };
 
@@ -138,9 +131,7 @@ export class Services {
         caseInstance.distortions = serialized.distortions.map(e =>
             new DistortionThought(e._distortion)
         );
-        caseInstance.counterThoughts = serialized.counterThoughts.map(e =>
-            new CounterConditioningThought(e._counterThought)
-        );
+        caseInstance.counterThoughts = serialized.counterThoughts;
         return caseInstance;
     }
 
@@ -155,9 +146,7 @@ export class Services {
             distortions: caseInstance.distortions.map(e => ({
                 _distortion: e.getDistortion,
             })),
-            counterThoughts: caseInstance.counterThoughts.map(e => ({
-                _counterThought: e.getCounterThought,
-            })),
+            counterThoughts: caseInstance.counterThoughts,
         };
     }
 

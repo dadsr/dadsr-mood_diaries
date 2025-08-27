@@ -1,15 +1,15 @@
-import {Control, Controller} from "react-hook-form";
-import {CaseFormValues, EmotionOption} from "../models/Types";
-import {EmotionKey, EmotionsConst} from "../models/consts/EmotionsConst";
-import {I18nManager, StyleSheet, View, Text} from "react-native";
-import {Emotion} from "../models/Emotion";
+import React, { useMemo } from "react";
+import { Control, Controller } from "react-hook-form";
+import { CaseFormValues, EmotionOption } from "../models/Types";
+import { EmotionKey, EmotionsConst } from "../models/consts/EmotionsConst";
+import { I18nManager, StyleSheet, View, Text } from "react-native";
+import { Emotion } from "../models/Emotion";
 import Slider from "@react-native-community/slider";
-import {MultiSelect} from 'react-native-element-dropdown';
-import {COLORS} from "../styles/themConstants";
-import {useTranslation} from "react-i18next";
-import {nbsp} from "../styles/globalStyles";
-import {JSX} from "react";
-
+import { MultiSelect } from 'react-native-element-dropdown';
+import { COLORS } from "../styles/themConstants";
+import { useTranslation } from "react-i18next";
+import { nbsp } from "../styles/globalStyles";
+import { JSX } from "react";
 
 interface EmotionsSelectorProps {
     diary: number;
@@ -17,18 +17,26 @@ interface EmotionsSelectorProps {
     name: "emotions";
 }
 
-export function EmotionsSelector({diary, control, name}: EmotionsSelectorProps): JSX.Element {
+export function EmotionsSelector({ diary, control, name }: EmotionsSelectorProps): JSX.Element {
     console.log("EmotionsSelector");
 
-    const {t} = useTranslation();
+    const { t, i18n } = useTranslation();
 
-    const emotionOptions: EmotionOption[] = Object.entries(EmotionsConst).map(([key, emotion]) => ({
-        value: key as EmotionKey,
-        label: emotion.displayName,
-        intensity: 50
-    }));
 
-    // Function to render markings for slider
+    const emotionOptions: EmotionOption[] = useMemo(() => {
+        return Object.keys(EmotionsConst).map((key) => ({
+            value: key as EmotionKey,
+            label: t(`emotions.${key}`),
+            intensity: 50
+        }));
+    }, [t, i18n.language]);
+
+
+    const getEmotionDisplayName = (emotionKey: EmotionKey): string => {
+        return t(`emotions.${emotionKey}`);
+    };
+
+
     const renderSliderMarkings = () => {
         const markings = [];
         for (let i = 0; i <= 100; i += 10) {
@@ -42,59 +50,72 @@ export function EmotionsSelector({diary, control, name}: EmotionsSelectorProps):
     };
 
 
-    return (
+    const isRTL = I18nManager.isRTL;
+    const textAlign = isRTL ? 'right' : 'left';
+    const flexDirection = isRTL ? 'row-reverse' : 'row';
 
+    return (
         <View style={styles.container}>
-            <Text style={styles.heading}>{t('emotionsSelector.emotions')}{':'+ nbsp}</Text>
+            <Text style={[styles.heading, { textAlign }]}>
+                {t('emotionsSelector.emotions')}{':' + nbsp}
+            </Text>
+
             <Controller
                 name={name}
                 control={control}
-                render={({field}) => {
+                render={({ field }) => {
+
                     const selectValue: EmotionOption[] = Array.isArray(field.value) ?
                         field.value
-                            .filter((emotion: Emotion) => emotion.getEmotion !== null && emotion.getEmotion !== undefined)
-                            .map((emotion: Emotion) => (
-                                {
-                                    value: emotion.getEmotion as EmotionKey,
-                                    label: EmotionsConst[emotion.getEmotion as EmotionKey].displayName,
-                                    intensity: emotion.getIntensity
-                                }
-                            )) : [];
+                            .filter((emotion: Emotion) =>
+                                emotion.getEmotion !== null &&
+                                emotion.getEmotion !== undefined
+                            )
+                            .map((emotion: Emotion) => ({
+                                value: emotion.getEmotion as EmotionKey,
+                                label: getEmotionDisplayName(emotion.getEmotion as EmotionKey),
+                                intensity: emotion.getIntensity
+                            })) : [];
 
                     return (
                         <View>
                             <View style={styles.selectorContainer}>
                                 <MultiSelect
-                                    selectedTextStyle={styles.multiSelectPlaceholder}
-                                    inputSearchStyle={styles.multiSelectSearch}
+                                    selectedTextStyle={[styles.multiSelectPlaceholder, { textAlign }]}
+                                    inputSearchStyle={[styles.multiSelectSearch, { textAlign }]}
                                     iconStyle={styles.multiSelectIcon}
                                     data={emotionOptions}
                                     labelField="label"
                                     valueField="value"
                                     value={selectValue.map(option => option.value)}
-                                    onChange={(selectedItems) => {
-                                        const emotions = selectedItems.map((item: any) => {
-                                            const existingEmotion = selectValue.find(option => option.value === item);
 
+                                    onChange={(selectedKeys: string[]) => {
+                                        const emotions = selectedKeys.map((key: string) => {
+                                            const existingEmotion = selectValue.find(
+                                                option => option.value === key
+                                            );
                                             return new Emotion(
-                                                item,
+                                                key as EmotionKey,
                                                 existingEmotion ? existingEmotion.intensity : 50
                                             );
                                         });
                                         field.onChange(emotions);
                                     }}
-                                    placeholder={t('emotionsSelector.choose an emotion')}
+
+                                    placeholder={t('emotionsSelector.chooseEmotion')}
                                     search
                                     searchPlaceholder={t('emotionsSelector.search')}
                                 />
                             </View>
 
-                            {/* Intensity sliders for selected emotions */}
+
                             {selectValue.map((option: EmotionOption) => (
                                 <View key={option.value} style={styles.sliderContainer}>
-                                    <Text style={styles.emotionLabel}>{option.label}</Text>
+                                    <Text style={[styles.emotionLabel, { textAlign }]}>
+                                        {option.label}
+                                    </Text>
 
-                                    <View key={option.value} style={styles.sliderWithMarkings} >
+                                    <View style={styles.sliderWithMarkings}>
                                         <View style={styles.markingsContainer}>
                                             {renderSliderMarkings()}
                                         </View>
@@ -117,7 +138,10 @@ export function EmotionsSelector({diary, control, name}: EmotionsSelectorProps):
                                             maximumTrackTintColor="#CCCCCC"
                                         />
                                     </View>
-                                    <Text style={styles.intensityValue}>{option.intensity}%</Text>
+
+                                    <Text style={[styles.intensityValue, { textAlign: 'center' }]}>
+                                        {option.intensity}%
+                                    </Text>
                                 </View>
                             ))}
                         </View>
@@ -127,58 +151,60 @@ export function EmotionsSelector({diary, control, name}: EmotionsSelectorProps):
         </View>
     );
 }
+
+// Step 10: Enhanced styles with RTL considerations
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection:"column",
+        flexDirection: "column",
         paddingStart: 16,
         paddingEnd: 16,
         paddingTop: 20,
-        textAlign: I18nManager.isRTL ? 'right' : 'left',
     },
-
-    heading:{
-        flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
+    heading: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
-
-    sliderMark:{
+    sliderMark: {
         position: 'absolute',
         alignItems: 'center',
-        transform: [{ translateX: -5 }], // Center the mark
+        transform: [{ translateX: -5 }],
     },
-
-    markLine:{
+    markLine: {
         width: 1,
         height: 6,
         backgroundColor: '#666',
         marginBottom: 2,
     },
+    selectorContainer: {
+        marginBottom: 20,
+        padding: 10,
+        borderWidth: 2,
+        borderColor: COLORS.primary,
+        backgroundColor:'rgba(222,211,196,0.28)',
+        borderRadius: 15
 
-    selectorContainer:{
-        fontSize: 8,
-        color: '#666',
-        textAlign: 'center',
-        minWidth: 10,
     },
-
-    multiSelectPlaceholder:{
-        fontSize:18,
+    multiSelectPlaceholder: {
+        fontSize: 16,
         color: COLORS.text,
-    },
 
-    multiSelectSearch:{
+    },
+    multiSelectSearch: {
         height: 50,
-        fontSize: 18,
-        textAlign:  I18nManager.isRTL ? 'right' : 'left',
-    },
+        fontSize: 16,
 
-    multiSelectIcon:{
+    },
+    multiSelectIcon: {
         width: 20,
         height: 20,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#000',
     },
-
-    sliderContainer:{
-        flexDirection: 'column', // Changed from row to column
+    sliderContainer: {
+        flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'stretch',
         padding: 10,
@@ -186,48 +212,35 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: '#000',
         marginVertical: 5,
-        zIndex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: 'rgba(176,253,170,0.42)',
     },
-
-    emotionLabel:{
+    emotionLabel: {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 5,
-        textAlign: 'right',
     },
-
-    sliderWithMarkings:{
+    sliderWithMarkings: {
         position: 'relative',
         width: '100%',
         height: 60,
         justifyContent: 'center',
         marginVertical: 10,
-        zIndex: 1,
     },
-
-    markingsContainer:{
+    markingsContainer: {
         position: 'absolute',
-        top: 15, // Position markings below the slider track
-        left: 15, // Account for slider padding
-        right: 15, // Account for slider padding
+        top: 15,
+        left: 15,
+        right: 15,
         height: 30,
-        zIndex: 1,
         pointerEvents: 'none',
     },
-
-    slider:{
+    slider: {
         width: '100%',
         height: 40,
-        zIndex: 2,
     },
-
-    intensityValue:{
+    intensityValue: {
         fontSize: 14,
-        textAlign: 'center',
         marginTop: 5,
         fontWeight: 'bold',
     }
-
 });
-

@@ -1,4 +1,4 @@
-import {EmotionKey, EmotionsConst} from "./consts/EmotionsConst";
+import { EmotionKey, EmotionsConst } from "./consts/EmotionsConst";
 
 export class Emotion {
     private _emotion: EmotionKey | null;
@@ -23,6 +23,7 @@ export class Emotion {
     set setEmotion(emotionType: EmotionKey | null) {
         this._emotion = emotionType;
     }
+
     get getIntensity(): number {
         return this._intensity;
     }
@@ -30,10 +31,4 @@ export class Emotion {
     set setIntensity(intensity: number) {
         this._intensity = intensity;
     }
-
-    get displayName(): string {
-        if (!this._emotion) return 'Unknown Emotion';
-        return EmotionsConst[this._emotion]?.displayName || this._emotion;
-    }
-
 }

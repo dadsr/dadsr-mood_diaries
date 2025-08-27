@@ -19,6 +19,18 @@ export default function TabLayout() {
             />
 
             <Tabs.Screen
+                name="secondDiary"
+                options={{
+                    tabBarLabel: (props) => (
+                        <TabLabelTranslate {...props} labelKey="navigation.secondDiary" />
+                    ),
+                    tabBarIcon: ({ color }) => (
+                        <MaterialIcons name="view-list" size={24} color={color} />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
                 name="settings"
                 options={{
                     tabBarLabel: (props) => (

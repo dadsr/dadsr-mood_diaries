@@ -2,21 +2,20 @@ import {CounterThoughtKey} from "./consts/CounterConditioningThoughtsConst";
 import {DistortionsThoughtKey} from "./consts/DistortionsThoughtsConst";
 import {Emotion} from "./Emotion";
 import {DistortionThought} from "./DistortionThought";
-import {CounterConditioningThought} from "./CounterConditioningThought";
 import {EmotionKey} from "./consts/EmotionsConst";
 
 
 export interface SerializedEmotion {
     _emotion: EmotionKey | null;
     _intensity: number;
-}
+};
 
 export interface SerializedDistortionThought {
     _distortion: DistortionsThoughtKey | null;
-}
+};
 export interface SerializedCounterConditioningThought {
     _counterThought: CounterThoughtKey | null;
-}
+};
 
 export interface SerializedCase {
     id: number;
@@ -28,8 +27,8 @@ export interface SerializedCase {
     behavior: string | null;
     symptoms: string | null;
     distortions: SerializedDistortionThought[];
-    counterThoughts: SerializedCounterConditioningThought[];
-}
+    counterThoughts: string | null;
+};
 
 export type CaseFormValues = {
     id: number;
@@ -41,18 +40,16 @@ export type CaseFormValues = {
     behavior: string;
     symptoms: string;
     distortions: DistortionThought[];
-    counterThoughts: CounterConditioningThought[];
+    counterThoughts: string;
 };
 
 export interface EmotionOption {
     value: EmotionKey;
     label: string;
     intensity: number;
-}
+};
 
-export interface ThoughtItem {
+export type ThoughtItem = {
     id: string;
-    displayName: string;
-    description: string;
-}
-
+    name: string;
+};

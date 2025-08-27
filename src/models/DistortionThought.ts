@@ -14,8 +14,5 @@ export class DistortionThought {
         return this._distortion;
     }
 
-    get displayName(): string {
-        if (!this._distortion) return 'Unknown Thought';
-        return DistortionsThoughtsConst[this._distortion]?.displayName || this._distortion;
-    }
+
 }

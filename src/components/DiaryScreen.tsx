@@ -8,6 +8,7 @@ import {Case} from "../models/Case";
 import {globalStyles} from "../styles/globalStyles";
 import CaseCard from "./CaseCard";
 import {useTranslation} from "react-i18next";
+import {COLORS} from "../styles/themConstants";
 
 
 type DiaryProps = {
@@ -15,9 +16,10 @@ type DiaryProps = {
 };
 
 export default function DiaryScreen({ diary }: DiaryProps): JSX.Element {
+    console.log("DiaryScreen ",diary);
+
     const {t} = useTranslation();
 
-    console.log("DiaryScreen ",diary);
     const insets = useSafeAreaInsets();
     const [cases, setCases] = useState<Case[]>([]);
 
@@ -49,7 +51,7 @@ export default function DiaryScreen({ diary }: DiaryProps): JSX.Element {
                         cases.map(c => <CaseCard key={c.id} diary={diary} case={c} />)
                     ): (
                         <View style = {styles.noEventsContainer}>
-                            <Text style={styles.noEventsTextheader}>{t("diary.no events found.")}</Text>
+                            <Text style={styles.noEventsTextHeader}>{t("diary.no events found.")}</Text>
                             <Text style={styles.noEventsText}>{t("diary.click Add Event to get started.")}</Text>
                         </View>
                     )}
@@ -60,7 +62,12 @@ export default function DiaryScreen({ diary }: DiaryProps): JSX.Element {
                     color= "#fff"
                     size="medium"
                     onPress={addNewCase}
-                    style={globalStyles.fab}
+                    style={{
+                        position: "absolute",
+                        [I18nManager.isRTL ? "left" : "right"]: 16,
+                        bottom: insets.bottom - 15 ,
+                        backgroundColor: COLORS.secondary
+                    }}
                 />
 
             </SafeAreaView >
@@ -70,6 +77,7 @@ export default function DiaryScreen({ diary }: DiaryProps): JSX.Element {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         paddingHorizontal: 20,
         paddingVertical: 50,
     },
@@ -77,7 +85,7 @@ const styles = StyleSheet.create({
     noEventsContainer: {
 
     },
-    noEventsTextheader: {
+    noEventsTextHeader: {
         fontSize: 16,
         lineHeight: 24,
         marginBottom: 20,

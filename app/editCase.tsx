@@ -1,6 +1,9 @@
 import React, {JSX, useEffect, useState} from "react";
 import {
+    Animated,
+    I18nManager,
     ImageBackground,
+    Modal,
     SafeAreaView,
     ScrollView as DefaultScrollView,
     StyleSheet,
@@ -16,13 +19,18 @@ import {CaseFormValues} from "../src/models/Types";
 import {Controller, useForm} from "react-hook-form";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-import {backgroundImg, modelImg} from "../assets";
+import {backgroundImg, settingsImg} from "../assets";
 import {useTranslation} from "react-i18next";
 import {Emotion} from "../src/models/Emotion";
 import {DistortionThought} from "../src/models/DistortionThought";
-import {CounterConditioningThought} from "../src/models/CounterConditioningThought";
 import {Case} from "../src/models/Case";
 import services from "../src/services/Services";
+import MultiSelectCheckboxes from "../src/components/multiSelectCheckboxes";
+import {DistortionsThoughtKey, distortionsThoughtsArray} from "../src/models/consts/DistortionsThoughtsConst";
+import {EmotionsSelector} from "../src/components/emotionsSelector";
+import {COLORS} from "../src/styles/themConstants";
+import ScrollView = Animated.ScrollView;
+
 
 export default function EditCase(): JSX.Element {
 
@@ -36,7 +44,12 @@ export default function EditCase(): JSX.Element {
     const [isSubmitting, setIsSubmitting] = useState<boolean>(
         false);
     const [showPicker, setShowPicker] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);//open/close modal
+    const [isEmotionsModalVisible, setIsEmotionsModalVisible] = useState(false);
+    const [isThoughtsModalVisible, setIsThoughtsModalVisible] = useState(false);
+
+    const [selectedDistortions, setSelectedDistortions] = useState<string[]>([]);
+
+
 
     const {control, handleSubmit, setValue, watch, formState: {errors}} = useForm<CaseFormValues>({
         defaultValues: {
@@ -48,7 +61,7 @@ export default function EditCase(): JSX.Element {
             behavior: '',
             symptoms: '',
             distortions: [] as DistortionThought[],
-            counterThoughts: [] as CounterConditioningThought[],
+            counterThoughts:'',
         }
     });
 
@@ -67,14 +80,31 @@ export default function EditCase(): JSX.Element {
                     setValue('behavior', myCase.behavior!);
                     setValue('symptoms', myCase.symptoms!);
                     setValue('distortions', myCase.distortions.map((thought: DistortionThought) => new DistortionThought(thought.getDistortion)));
-                    setValue('counterThoughts', myCase.counterThoughts.map((thought: CounterConditioningThought) => new CounterConditioningThought(thought.getCounterThought)));
+                    setValue('counterThoughts', myCase.counterThoughts!);
                 }
             })();
         }
     }, [id,setValue]);
 
-    const openModal = () => setIsModalVisible(true);
-    const closeModal = () => setIsModalVisible(false);
+
+    const openEmotionsModal = () => setIsEmotionsModalVisible(true);
+    const closeEmotionsModal = () => setIsEmotionsModalVisible(false);
+
+    const openThoughtsModal = () =>  setIsThoughtsModalVisible(true);
+    const closeThoughtsModal = () =>  setIsThoughtsModalVisible(false);
+
+    const currentDistortions = (watch('distortions') as DistortionThought[]) || [];
+    const initialSelectedIds = currentDistortions
+        .map(d => d.getDistortion)
+        .filter((id): id is DistortionsThoughtKey => !!id);
+
+    const handleDistortionsSave = () => {
+        const distortionObjects = selectedDistortions.map(distortionId =>
+            new DistortionThought(distortionId as DistortionsThoughtKey)
+        );
+        setValue('distortions', distortionObjects);
+        closeThoughtsModal();
+    };
 
     const submitForm = async (data: CaseFormValues) => {
         console.log("submitForm diary ",diary);
@@ -89,7 +119,7 @@ export default function EditCase(): JSX.Element {
         caseInstance.behavior = data.behavior;
         caseInstance.symptoms = data.symptoms;
         caseInstance.distortions = data.distortions.map((thought:DistortionThought) => new DistortionThought(thought.getDistortion));
-        caseInstance.counterThoughts = data.counterThoughts.map((thought:CounterConditioningThought) => new CounterConditioningThought(thought.getCounterThought));
+        caseInstance.counterThoughts = data.counterThoughts;
 
         try {
             if (caseInstance.id > 0) {
@@ -97,14 +127,21 @@ export default function EditCase(): JSX.Element {
             } else {
                 await services.addCase(diary, caseInstance);
             }
-            router.back();
+            if (diary === 1) {
+                router.replace('/firstDiary');
+            } else if (diary === 2) {
+                router.replace('/secondDiary');
+            } else {
+                router.back();
+            }
         } catch (error) {
             console.error("Error saving case:", error);
-            // Handle error appropriately
         } finally {
             setIsSubmitting(false);
         }
     };
+
+
 
 
     return (
@@ -119,8 +156,8 @@ export default function EditCase(): JSX.Element {
 
                     <Text style = {globalStyles.heading}>{t("editCase.editing event")}:</Text>
 
-                    {/* Case Name Field */}
-                    <Text style={styles.label}>{t("editCase.event name")}{':' + nbsp}</Text>
+                    /* description */
+                    <Text style={styles.label}>{t("editCase.eventName")}{':' + nbsp}</Text>
                     <Controller
                         control={control}
                         name="caseName"
@@ -128,7 +165,6 @@ export default function EditCase(): JSX.Element {
                         render={({ field: { onChange, value } }) => (
                             <TextInput
                                 style={styles.input}
-                                placeholder={t("editCase.caseName")}
                                 value={value}
                                 onChangeText={onChange}
                             />
@@ -175,7 +211,6 @@ export default function EditCase(): JSX.Element {
                         render={({ field: { onChange, value } }) => (
                             <TextInput
                                 style={[styles.input, styles.textarea]}
-                                placeholder={t("editCase.thoughtPlaceholder")}
                                 value={value}
                                 onChangeText={onChange}
                                 multiline={true}
@@ -185,10 +220,60 @@ export default function EditCase(): JSX.Element {
                     />
 
                     {/* Emotions Selector */}
-                    <Text style={styles.emotionsTitle}>{t("editCase.emotions selection")}</Text>
-                    {/* TODO: Add emotions selector component */}
+                    <Text style={styles.label}>{t("editCase.emotions")}{':' + nbsp}</Text>
 
-                    {/* Conditional Fields for Diary Type 1 */}
+                    <ImageBackground
+                        source={settingsImg}
+                        style={globalStyles.background}
+                        resizeMode="cover"
+                    >
+                        <TouchableOpacity style={globalStyles.modelOpener} onPress={openEmotionsModal}>
+                            <Text style={styles.emotionsTitle}>{t("editCase.emotions selection")}</Text>
+                        </TouchableOpacity>
+                    </ImageBackground>
+
+
+
+
+                        <Modal
+                            visible={isEmotionsModalVisible}
+                            animationType="fade"
+                            presentationStyle="pageSheet"
+                            onRequestClose={closeEmotionsModal}
+                        >
+                            <SafeAreaView style={styles.modalContainer}>
+                                <View style={styles.modalHeader}>
+                                    {/*exit*/}
+                                    <TouchableOpacity onPress={closeEmotionsModal}>
+                                        <Text style={styles.exitButton}>↩</Text>
+                                    </TouchableOpacity>
+
+                                    {/*title*/}
+                                    <Text style={styles.modalTitle}>
+                                        {t("editCase.emotions selection")}
+                                    </Text>
+                                    <View style={{ width: 30 }} />
+                                </View>
+
+                                <View style={{ flex: 1 }}>
+                                    <EmotionsSelector diary={diary} control={control} name="emotions" />
+                                </View>
+
+                                <View style={styles.footerContainer}>
+                                    <TouchableOpacity
+                                        style={styles.footerButton}
+                                        onPress={closeEmotionsModal}>
+                                        <Text style={styles.footerButtonText}>{t("editCase.save")}</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                            </SafeAreaView>
+                        </Modal>
+
+
+
+
+                    {/* behavior 1st diary */}
                     {diary === 1 && (
                         <>
                             <Text style={styles.label}>{t("editCase.behavior")}{':' + nbsp}</Text>
@@ -208,7 +293,7 @@ export default function EditCase(): JSX.Element {
                         </>
                     )}
 
-                    {/* Symptoms Field */}
+                    {/* Symptoms Field 1st diary */}
                     {diary === 1 && (
                         <>
                             <Text style={styles.label}>{t("editCase.symptoms")}{':' + nbsp}</Text>
@@ -228,25 +313,86 @@ export default function EditCase(): JSX.Element {
                         </>
                     )}
 
-                    {/*{diary === 2 &&(*/}
-                    {/*    <>*/}
-                    {/*        <Text style={globalStyles.text} >עיוותי חשיבה:</Text>*/}
-                    {/*        <MultiSelectCheckboxes*/}
-                    {/*            options = {distortionsThoughtsArray}*/}
-                    {/*            headerText='עיוות חשיבה'*/}
-                    {/*        />*/}
-                    {/*    </>*/}
-                    {/*)}*/}
+                    {diary === 2 &&(
+                        <>
+                            {/* Distortion thoughts Field 2st diary */}
+                            <Text style={styles.label}>{t("editCase.distortion thoughts")}{':' + nbsp}</Text>
 
-                    {/*{diary === 2 &&(*/}
-                    {/*    <>*/}
-                    {/*        <Text style={globalStyles.text} >מחשבות אוטומטיות:</Text>*/}
-                    {/*        <MultiSelectCheckboxes*/}
-                    {/*            options = {counterConditioningThoughtsArray}*/}
-                    {/*            headerText='מחשבה חלופית'*/}
-                    {/*        />*/}
-                    {/*    </>*/}
-                    {/*)}*/}
+                            <ImageBackground
+                                source={settingsImg}
+                                style={globalStyles.background}
+                                resizeMode="cover"
+                            >
+                                <TouchableOpacity style={globalStyles.modelOpener} onPress={openThoughtsModal}>
+                                    <Text style={styles.emotionsTitle}>{t("editCase.distortion thoughts")}</Text>
+                                </TouchableOpacity>
+                            </ImageBackground>
+
+
+                            <Modal
+                                visible={isThoughtsModalVisible}
+                                animationType="slide"
+                                onRequestClose={closeThoughtsModal}
+                            >
+                                <SafeAreaView style={styles.modalContainer}>
+                                    <View style={styles.modalHeader}>
+                                        {/*exit*/}
+                                        <TouchableOpacity onPress={closeThoughtsModal}>
+                                            <Text style={styles.exitButton}>↩</Text>
+                                        </TouchableOpacity>
+
+                                        {/*title*/}
+                                        <Text style={styles.modalTitle}>
+                                            {t("editCase.distortion thoughts selection")}
+                                        </Text>
+                                        <View style={{ width: 30 }} />
+                                    </View>
+
+                                    <View style={{ flex: 1 }}>
+                                        <MultiSelectCheckboxes
+                                            options={distortionsThoughtsArray}
+                                            headerText={t("editCase.distortion thoughts")}
+                                            initialSelected={initialSelectedIds}
+                                            onSelectionChange={setSelectedDistortions}
+                                        />
+                                    </View>
+
+                                    <View style={styles.footerContainer}>
+                                        <TouchableOpacity
+                                            style={styles.footerButton}
+                                            onPress={handleDistortionsSave}>
+                                            <Text style={styles.footerButtonText}>{t("editCase.save")}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
+                                </SafeAreaView>
+
+                            </Modal>
+
+
+
+                            {/*  Counter thoughts Field 2st diary */}
+
+                            <Text style={styles.label} >{t("editCase.counter thoughts")}{':' + nbsp}</Text>
+
+                            <Controller
+                                control={control}
+                                name="counterThoughts"
+                                render={({ field: { onChange, value } }) => (
+                                    <TextInput
+                                        style={[styles.input, styles.textarea]}
+                                        value={value}
+                                        onChangeText={onChange}
+                                        multiline={true}
+                                        numberOfLines={3}
+                                    />
+                                )}
+                            />
+
+                        </>
+
+                    )}
+
 
                     {/* Submit Button */}
                     <TouchableOpacity
@@ -338,4 +484,64 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         color: '#333',
     },
+
+    buttonContainer: {
+        alignItems: 'center',
+    },
+
+    modalContainer: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+        backgroundColor:'rgba(76,114,229,0.61)',
+
+    },
+
+    modalTitle: {
+        fontSize: 22,
+        padding: 5,
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+
+    exitButton: {
+        fontSize: 24,
+        color: '#666',
+        paddingHorizontal: 10
+    },
+
+    contentContainer: {
+        flex: 1,
+    },
+
+    footerContainer: {
+        padding: 16,
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+        backgroundColor: '#fff',
+    },
+
+    footerButton: {
+        backgroundColor: '#007AFF',
+        padding: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+
+    footerButtonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+
 });
+

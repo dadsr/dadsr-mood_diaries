@@ -14,20 +14,23 @@ import {Emotion} from "../models/Emotion";
 import {useTranslation} from "react-i18next";
 import EmotionCard from "./EmotionCard";
 import {COLORS} from "../styles/themConstants";
+import {DistortionThought} from "../models/DistortionThought";
+import DistortionThoughtCard from "./DistortionThoughtCard";
 
 interface modelProps {
     diary: number;
-    items: Emotion[];
+    items: Emotion[] | DistortionThought[];
 }
 
 export default function CaseModel({diary, items}: modelProps): JSX.Element {
+    console.log("CaseModel");
+
     const {t} = useTranslation();
     const [isModalVisible, setIsModalVisible] = useState(true);
     const closeModel = () => {
         setIsModalVisible(false);
         console.log("closeModel");
     };
-
 
     return (
         <Modal
@@ -36,23 +39,34 @@ export default function CaseModel({diary, items}: modelProps): JSX.Element {
             presentationStyle="pageSheet"
             onRequestClose={ closeModel }
         >
-                <View style={styles.container}>
-                    <View style={styles.heading}>
+            <View style={styles.container}>
+
+                <View style={styles.heading}>
+                    {items[0] instanceof Emotion && (
                         <Text style={styles.headingText}>{t("case.emotions")}:</Text>
-                    </View>
-                    <View style={styles.modalContent}>
+                    )}
 
-                        {diary === 1 && (
-                            <EmotionCard diary={diary} emotions={items as Emotion[]} />
-                        )}
-
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={globalStyles.button} onPress={ closeModel }>
-                            <Text style={globalStyles.buttonText}>{t("navigation.back")}</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {items[0] instanceof DistortionThought && (
+                        <Text style={styles.headingText}>{t("case.distortionThoughts")}:</Text>
+                    )}
                 </View>
+
+                <View style={styles.modalContent}>
+
+                    {items[0] instanceof Emotion && (
+                        <EmotionCard  emotions={items as Emotion[]} />
+                    )}
+                    {items[0] instanceof DistortionThought && (
+                        <DistortionThoughtCard distortionThoughts={items as DistortionThought[]} />
+                    )}
+
+                </View>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={globalStyles.button} onPress={ closeModel }>
+                        <Text style={globalStyles.buttonText}>{t("navigation.back")}</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </Modal>
     );
 }

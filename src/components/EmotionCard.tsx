@@ -5,20 +5,20 @@ import {Emotion} from "../models/Emotion";
 import Slider from "@react-native-community/slider";
 import {COLORS} from "../styles/themConstants";
 import {useTranslation} from "react-i18next";
+import {JSX} from "react";
 
 
 
 interface EmotionsProps {
-    diary: number;
     emotions: Emotion[];
 }
 
 
-export default function EmotionCard(props: EmotionsProps) {
+export default function EmotionCard(props: EmotionsProps):JSX.Element {
     console.log("EmotionCard");
 
     const {t} = useTranslation();
-    const {diary, emotions} = props;
+    const {emotions} = props;
     console.log("emotions - ", emotions.length);
 
 
@@ -50,7 +50,7 @@ export default function EmotionCard(props: EmotionsProps) {
                 ) : (
                     emotions.map((emotion:Emotion, index: number) => (
                         <View key={index} style={styles.sliderContainer}>
-                            <Text style={styles.sliderLabel}>{emotion.displayName}</Text>
+                            <Text style={styles.sliderLabel}>t(`emotion`)</Text>
 
                             <View style={styles.sliderWithMarkings} >
                                 <View style={styles.markingsContainer}>

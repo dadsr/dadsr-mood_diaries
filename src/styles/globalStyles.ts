@@ -183,20 +183,13 @@ export const globalStyles = StyleSheet.create({
         fontSize: 16,
     },
 
-    /** Fab */
-    fab: {
-        position: 'absolute',
-        margin: 2,
-        start: 0,
-        bottom: 0,
-        zIndex: 2,
-        backgroundColor: COLORS.secondary,
-    },
+
 
     modelOpener: {
         alignItems: 'center',
         paddingVertical: 10,
         marginVertical: 6,
+
     },
 
     XXX:{

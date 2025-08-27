@@ -16,13 +16,16 @@ interface CaseProps {
 }
 
 export default function CaseCard(props: CaseProps): JSX.Element {
-    const { t } = useTranslation();
     console.log("CaseCard");
+
+
+    const { t } = useTranslation();
     const { diary, case: item } = props;
     const [isFeelingsModalVisible, setIsFeelingsModalVisible] = useState(false);
+    const [isDistortionsModalVisible, setIsDistortionsModalVisible] = useState(false);
 
     const openFeelingsModal = () => setIsFeelingsModalVisible(true);
-    const closeFeelingsModal = () => setIsFeelingsModalVisible(false);
+    const openDistortionsModal = () => setIsDistortionsModalVisible(true);
 
     const editCase = () => {
         router.push({ pathname: '/editCase', params: { diary: diary, id: item.id } });
@@ -53,13 +56,17 @@ export default function CaseCard(props: CaseProps): JSX.Element {
             />
 
             <Card.Content>
+                {/* description */}
                 <Text style={globalStyles.text}>
                     {t("case.description")}: {item.caseDescription}
                 </Text>
+
+                {/* thought */}
                 <Text style={globalStyles.text}>
                     {t("case.thought")}: {item.thought}
                 </Text>
 
+                {/* emotions */}
                 <ImageBackground
                     source={displayImg}
                     style={globalStyles.background}
@@ -76,16 +83,49 @@ export default function CaseCard(props: CaseProps): JSX.Element {
                     )}
                 </ImageBackground>
 
+
+                {/* behavior */}
                 {diary === 1 && (
                     <>
+                        {/* behavior */}
                         <Text style={globalStyles.text}>
                             {t("case.behavior")}: {item.behavior}
                         </Text>
+                        {/* symptoms */}
                         <Text style={globalStyles.text}>
                             {t("case.symptoms")}: {item.symptoms}
                         </Text>
                     </>
                 )}
+
+
+                {diary === 2 && (
+                    <>
+                        {/* Distortions */}
+                        <View style={{ height: 20 }} />
+                        <ImageBackground
+                            source={displayImg}
+                            style={globalStyles.background}
+                            resizeMode="stretch"
+                        >
+                            <TouchableOpacity style={globalStyles.modelOpener} onPress={openDistortionsModal}>
+                                <Text style={styles.linkText}>
+                                    {t("case.distortionThoughts")}
+                                </Text>
+                            </TouchableOpacity>
+
+                            {isDistortionsModalVisible && (
+                                <CaseModel diary={diary} items={item.distortions} />
+                            )}
+                        </ImageBackground>
+                        {/* counterThoughts */}
+                        <Text style={globalStyles.text}>
+                            {t("case.counterThoughts")}: {item.counterThoughts}
+                        </Text>
+                    </>
+                )}
+
+
             </Card.Content>
 
             <Card.Actions style={styles.actionsButtonsContainer}>

@@ -12,7 +12,7 @@ export class Case {
     behavior: string | null;
     symptoms: string | null;
     distortions: DistortionThought[];
-    counterThoughts: CounterConditioningThought[];
+    counterThoughts: string | null;
 
 
     constructor() {
@@ -25,7 +25,7 @@ export class Case {
         this.behavior = null;
         this.symptoms = null;
         this.distortions = [];
-        this.counterThoughts = [];
+        this.counterThoughts = null;
 
     }
 }

@@ -15,7 +15,6 @@ export default function Settings(): JSX.Element {
     const [snackbarVisible, setSnackbarVisible] = useState(false);
     const [selectedDiary, setSelectedDiary] = useState(1);
 
-    // console.log("⚙️ Settings component - isHebrew:", isHebrew);
 
 
     const clearDiary = (diary:number) => {
@@ -51,7 +50,8 @@ export default function Settings(): JSX.Element {
                         </Text>
                     </View>
 
-                    // Diary selection
+
+                     {/* Diary selection */}
                     <View style={globalStyles.selectionSection}>
                         <Text style={globalStyles.sectionTitle}>{t('settings.diaryToClear')}</Text>
                         <RadioButton.Group
@@ -69,7 +69,7 @@ export default function Settings(): JSX.Element {
                         </RadioButton.Group>
                     </View>
 
-                    // Clear button
+                    {/* Clear button */}
                     <Button
                         mode="contained"
                         onPress={() =>clearDiary(selectedDiary)}

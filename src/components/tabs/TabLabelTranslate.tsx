@@ -12,7 +12,7 @@ export default function TabLabelTranslate({ labelKey, color, focused }: TabLabel
     const { t } = useTranslation();
 
     return (
-        <Text style={{ color, fontWeight: focused ? "bold" : "normal" }}>
+        <Text style={{ color, fontSize: 10, fontWeight: focused ? "bold" : "normal" }}>
             {t(labelKey)}
         </Text>
     );
