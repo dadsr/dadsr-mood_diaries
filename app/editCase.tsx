@@ -28,7 +28,7 @@ import services from "../src/services/Services";
 import MultiSelectCheckboxes from "../src/components/multiSelectCheckboxes";
 import {DistortionsThoughtKey, distortionsThoughtsArray} from "../src/models/consts/DistortionsThoughtsConst";
 import {EmotionsSelector} from "../src/components/emotionsSelector";
-import {COLORS} from "../src/styles/themConstants";
+import {COLORS, TYPOGRAPHY} from "../src/styles/themConstants";
 import ScrollView = Animated.ScrollView;
 
 
@@ -156,13 +156,14 @@ export default function EditCase(): JSX.Element {
 
                     <Text style = {globalStyles.heading}>{t("editCase.editing event")}:</Text>
 
-                    /* description */
+                    {/* description */}
                     <Text style={styles.label}>{t("editCase.eventName")}{':' + nbsp}</Text>
                     <Controller
                         control={control}
                         name="caseName"
-                        rules={{ required: t("editCase.caseNameRequired") || "Case name is required" }}
+                        rules={{ required: t("editCase.caseNameRequired")}}
                         render={({ field: { onChange, value } }) => (
+
                             <TextInput
                                 style={styles.input}
                                 value={value}
@@ -235,40 +236,41 @@ export default function EditCase(): JSX.Element {
 
 
 
-                        <Modal
-                            visible={isEmotionsModalVisible}
-                            animationType="fade"
-                            presentationStyle="pageSheet"
-                            onRequestClose={closeEmotionsModal}
-                        >
-                            <SafeAreaView style={styles.modalContainer}>
-                                <View style={styles.modalHeader}>
-                                    {/*exit*/}
-                                    <TouchableOpacity onPress={closeEmotionsModal}>
-                                        <Text style={styles.exitButton}>↩</Text>
-                                    </TouchableOpacity>
+                    <Modal
+                        visible={isEmotionsModalVisible}
+                        animationType="fade"
+                        presentationStyle="pageSheet"
+                        onRequestClose={closeEmotionsModal}
+                    >
+                        <SafeAreaView style={styles.modalContainer}>
+                            <View style={styles.modalHeader}>
+                                {/*exit*/}
+                                <TouchableOpacity onPress={closeEmotionsModal}>
+                                    <Text style={styles.exitButton}>X</Text>
+                                </TouchableOpacity>
 
-                                    {/*title*/}
-                                    <Text style={styles.modalTitle}>
-                                        {t("editCase.emotions selection")}
-                                    </Text>
-                                    <View style={{ width: 30 }} />
-                                </View>
 
-                                <View style={{ flex: 1 }}>
-                                    <EmotionsSelector diary={diary} control={control} name="emotions" />
-                                </View>
+                                {/*title*/}
+                                <Text style={styles.modalTitle}>
+                                    {t("editCase.emotions selection")}
+                                </Text>
+                                <View style={{ width: 30 }} />
+                            </View>
 
-                                <View style={styles.footerContainer}>
-                                    <TouchableOpacity
-                                        style={styles.footerButton}
-                                        onPress={closeEmotionsModal}>
-                                        <Text style={styles.footerButtonText}>{t("editCase.save")}</Text>
-                                    </TouchableOpacity>
-                                </View>
+                            <View style={{ flex: 1 }}>
+                                <EmotionsSelector diary={diary} control={control} name="emotions" />
+                            </View>
 
-                            </SafeAreaView>
-                        </Modal>
+                            <View style={styles.footerContainer}>
+                                <TouchableOpacity
+                                    style={styles.footerButton}
+                                    onPress={closeEmotionsModal}>
+                                    <Text style={styles.footerButtonText}>{t("editCase.save")}</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                        </SafeAreaView>
+                    </Modal>
 
 
 
@@ -338,7 +340,7 @@ export default function EditCase(): JSX.Element {
                                     <View style={styles.modalHeader}>
                                         {/*exit*/}
                                         <TouchableOpacity onPress={closeThoughtsModal}>
-                                            <Text style={styles.exitButton}>↩</Text>
+                                            <Text style={styles.exitButton}>X</Text>
                                         </TouchableOpacity>
 
                                         {/*title*/}
@@ -422,16 +424,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 16,
         marginBottom: 8,
-        color: '#333',
+        color: COLORS.label,
     },
 
     input: {
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: COLORS.inputBorder,
         borderRadius: 8,
         padding: 12,
         fontSize: 16,
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.input,
         marginBottom: 8,
     },
 
@@ -441,10 +443,10 @@ const styles = StyleSheet.create({
     },
 
     error: {
-        color: '#ff4444',
         fontSize: 14,
         marginBottom: 8,
         marginTop: 4,
+        color: COLORS.error,
     },
 
     dateText: {
@@ -455,16 +457,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         backgroundColor: '#fff',
         marginBottom: 8,
-        color: '#333',
+        color: COLORS.text
     },
 
     submitButton: {
-        backgroundColor: '#007AFF',
         padding: 16,
         borderRadius: 8,
         alignItems: 'center',
         marginTop: 24,
         marginBottom: 32,
+        backgroundColor: COLORS.button,
     },
 
     submitButtonDisabled: {
@@ -472,9 +474,9 @@ const styles = StyleSheet.create({
     },
 
     submitButtonText: {
-        color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
+        color:  COLORS.buttonText,
     },
 
     emotionsTitle: {
@@ -482,7 +484,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 16,
         marginBottom: 8,
-        color: '#333',
+        color: COLORS.titleText,
     },
 
     buttonContainer: {
@@ -491,54 +493,53 @@ const styles = StyleSheet.create({
 
     modalContainer: {
         flex: 1,
-        backgroundColor: '#fff',
     },
 
     modalHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: 'row-reverse',
         alignItems: 'center',
         paddingHorizontal: 16,
         paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-        backgroundColor:'rgba(76,114,229,0.61)',
-
+        borderBottomWidth: 3,
+        borderBottomColor: COLORS.cardBorder,
+        backgroundColor: COLORS.modelHeader,
     },
 
     modalTitle: {
-        fontSize: 22,
-        padding: 5,
-        fontWeight: 'bold',
+        ...TYPOGRAPHY.HEADING.H2,
+        flex: 1,
         textAlign: 'center',
+        padding: 5,
+
     },
 
     exitButton: {
         fontSize: 24,
-        color: '#666',
-        paddingHorizontal: 10
+        color: COLORS.cardBorder,
+        paddingHorizontal: 10,
     },
 
     contentContainer: {
         flex: 1,
+        backgroundColor: COLORS.modelBackground,
     },
 
     footerContainer: {
         padding: 16,
         borderTopWidth: 1,
-        borderTopColor: '#eee',
-        backgroundColor: '#fff',
+        borderTopColor: COLORS.footerBorder,
+        backgroundColor: COLORS.footer,
     },
 
     footerButton: {
-        backgroundColor: '#007AFF',
+        backgroundColor: COLORS.button,
         padding: 16,
         borderRadius: 8,
         alignItems: 'center',
     },
 
     footerButtonText: {
-        color: '#fff',
+        color: COLORS.buttonText,
         fontSize: 18,
         fontWeight: 'bold',
     },

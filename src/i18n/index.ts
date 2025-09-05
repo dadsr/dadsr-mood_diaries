@@ -12,7 +12,7 @@ const resources = {
 const deviceLocale =
     Localization.getLocales && Localization.getLocales().length > 0
         ? Localization.getLocales()[0].languageTag
-        : 'en';
+        : 'he';
 
 console.log("📱 Device locale detected:", deviceLocale);
 
@@ -21,14 +21,14 @@ i18n
     .init({
         resources,
         lng: deviceLocale,
-        fallbackLng: 'en',
+        fallbackLng: 'he',
         debug: true,
 
         interpolation: {
             escapeValue: false
         },
 
-        returnEmptyString: false, // Return key instead of empty string for missing translations
+        returnEmptyString: false,
 
         react: {
             useSuspense: false,

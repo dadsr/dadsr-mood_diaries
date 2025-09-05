@@ -40,6 +40,8 @@
     "distortionThoughts": "Distortion Thoughts",
     "distortions display": "Distortions display",
     "counterThoughts": "Counter Thoughts",
+    "no emotions to display": "No emotions saved. Set emotions for the event in the edit screen.",
+    "no distortions to display": "No Distortion Thoughts saved. Set Distortion Thoughts for the event in the edit screen.",
 
     "actions": {
       "edit": "Edit",
@@ -49,8 +51,7 @@
 
   "editCase": {
     "editing event": "Editing Event",
-
-    "event name is a required field": "Event name is a required field",
+    "caseNameRequired": "Event name is a required field",
     "eventName": "Event Name",
     "date": "Date",
     "event date": "Event Date",
@@ -64,7 +65,7 @@
 
     "distortion thoughts" : "Distortion thoughts",
     "distortion thoughts selection" : "Distortion thoughts selection",
-    "counter thoughts" : "Counter thoughts",
+    "counter thoughts" : "Counter thoughts"
 
   },
   "emotionsSelector": {
@@ -80,6 +81,10 @@
   },
   "multiSelectCheckboxes": {
     "select": "Select"
+  },
+
+  "common": {
+    "close": "Close"
   },
 
   "emotions": {
@@ -218,5 +223,6 @@
     "BLAMING": "Self-Blame or Blaming Others",
     "BLAMING_description": "Blaming myself or others for negative situations, even when there's no real justification for it."
   }
+
 }
 

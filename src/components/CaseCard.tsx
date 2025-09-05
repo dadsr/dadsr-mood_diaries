@@ -5,10 +5,11 @@ import { router } from "expo-router";
 import services from "../services/Services";
 import { globalStyles } from "../styles/globalStyles";
 import { I18nManager, ImageBackground, StyleSheet, TouchableOpacity, View } from "react-native";
-import CaseModel from "./CaseModel";
 import { useTranslation } from "react-i18next";
 import { displayImg } from "../../assets";
 import { COLORS } from "../styles/themConstants";
+import EmotionsModel from "./EmotionsModel";
+import DistortionThoughtsModel from "./DistortionThoughtsModel";
 
 interface CaseProps {
     diary: number;
@@ -25,7 +26,11 @@ export default function CaseCard(props: CaseProps): JSX.Element {
     const [isDistortionsModalVisible, setIsDistortionsModalVisible] = useState(false);
 
     const openFeelingsModal = () => setIsFeelingsModalVisible(true);
+    const closeFeelingsModal = () => setIsFeelingsModalVisible(false);
+
     const openDistortionsModal = () => setIsDistortionsModalVisible(true);
+    const closeDistortionsModal = () => setIsDistortionsModalVisible(false);
+
 
     const editCase = () => {
         router.push({ pathname: '/editCase', params: { diary: diary, id: item.id } });
@@ -79,7 +84,7 @@ export default function CaseCard(props: CaseProps): JSX.Element {
                     </TouchableOpacity>
 
                     {isFeelingsModalVisible && (
-                        <CaseModel diary={diary} items={item.emotions} />
+                        <EmotionsModel diary={diary} emotions ={item.emotions} />
                     )}
                 </ImageBackground>
 
@@ -115,7 +120,7 @@ export default function CaseCard(props: CaseProps): JSX.Element {
                             </TouchableOpacity>
 
                             {isDistortionsModalVisible && (
-                                <CaseModel diary={diary} items={item.distortions} />
+                                <DistortionThoughtsModel diary={diary} distortionThoughts={item.distortions} />
                             )}
                         </ImageBackground>
                         {/* counterThoughts */}
@@ -214,6 +219,7 @@ const styles = StyleSheet.create({
     actionsButton: {
         borderRadius: 12,
         paddingVertical: 6,
-        backgroundColor: COLORS.primary,
+        borderColor: COLORS.cardBorder,
+        backgroundColor: COLORS.button,
     },
 });

@@ -41,6 +41,9 @@
     "distortionThoughts": "עיוותי חשיבה",
     "distortions display": "תצוגת עיוותי חשיבה ",
     "counterThoughts": "מחשבות חליפיות",
+    "no emotions to display": "No emotions saved. Set emotions for the event in the edit screen.",
+    "no distortions to display": "No Distortion Thoughts saved. Set Distortion Thoughts for the event in the edit screen.",
+
 
     "actions": {
       "edit": "ערוך",
@@ -51,8 +54,7 @@
 
   "editCase": {
     "editing event": "עריכת אירוע",
-
-    "event name is a required field": "שם האירוע הוא שדה חובה",
+    "caseNameRequired": "שם האירוע הוא שדה חובה",
     "eventName": "שם האירוע",
     "date": "תאריך",
     "event date": "תאריך אירוע",
@@ -65,9 +67,7 @@
 
     "distortion thoughts" : "עיוותי חשיבה",
     "distortion thoughts selection" : "בחירת עיוותי חשיבה",
-    "counter thoughts" : "מחשבות אוטומטיות",
-
-
+    "counter thoughts" : "מחשבות אוטומטיות"
 
   },
 
@@ -85,6 +85,10 @@
     "multiSelectCheckboxes": {
       "select": "בחר"
     },
+
+  "common": {
+    "close": "סגור"
+  },
 
   "emotions": {
     "JOY": "שמחה",
