@@ -33,7 +33,7 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
                 const savedLang = await AsyncStorage.getItem(STORAGE_KEY);
                 console.log('💾 Saved language from storage:', savedLang);
 
-                const selectedLang = savedLang ?? (i18n.language || 'en');
+                const selectedLang = savedLang ?? (i18n.language || 'he');
 
                 if (!savedLang) {
                     await AsyncStorage.setItem(STORAGE_KEY, selectedLang);
@@ -55,8 +55,8 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
             } catch (error) {
                 console.error('❌ Error initializing language:', error);
                 try {
-                    await AsyncStorage.setItem(STORAGE_KEY, 'en');
-                    await i18n.changeLanguage('en');
+                    await AsyncStorage.setItem(STORAGE_KEY, 'he');
+                    await i18n.changeLanguage('he');
                     setIsHebrew(false);
                 } catch (fallbackError) {
                     console.error('❌ Error in fallback:', fallbackError);

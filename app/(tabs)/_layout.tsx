@@ -2,6 +2,7 @@ import {Tabs} from 'expo-router';
 import {MaterialIcons} from "@expo/vector-icons";
 import TabLabelTranslate from "../../src/components/tabs/TabLabelTranslate";
 
+
 export default function TabLayout() {
 
     return (
