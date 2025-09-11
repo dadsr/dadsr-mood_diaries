@@ -1,142 +1,139 @@
-import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
-import { Alert, I18nManager } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Updates from 'expo-updates';
-import i18n from 'i18next';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { Alert, I18nManager } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Updates from "expo-updates";
+import * as SplashScreen from "expo-splash-screen";
+import i18n from "i18next";
 
 type LanguageContextType = {
-    isHebrew: boolean;
-    toggleLanguage: () => void;
+  isHebrew: boolean;
+  toggleLanguage: () => void;
 };
 
 type LanguageProviderProps = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
-const STORAGE_KEY = 'preferredLanguage';
+const STORAGE_KEY = "preferredLanguage";
+const RTL_FLAG_KEY = "rtlConfigured";
 
 export const LanguageContext = createContext<LanguageContextType>({
-    isHebrew: false,
-    toggleLanguage: () => {},
+  isHebrew: false,
+  toggleLanguage: () => {},
 });
 
 export const useLanguage = () => useContext(LanguageContext);
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
-    const [isReady, setIsReady] = useState(false);
-    const [isHebrew, setIsHebrew] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [isHebrew, setIsHebrew] = useState(false);
 
-    useEffect(() => {
-        const initializeLanguage = async () => {
-            try {
-                console.log('🔄 Initializing language...');
-                const savedLang = await AsyncStorage.getItem(STORAGE_KEY);
-                console.log('💾 Saved language from storage:', savedLang);
-
-                const selectedLang = savedLang ?? (i18n.language || 'he');
-
-                if (!savedLang) {
-                    await AsyncStorage.setItem(STORAGE_KEY, selectedLang);
-                    console.log('💾 Saved default language to storage:', selectedLang);
-                }
-
-                await i18n.changeLanguage(selectedLang);
-                console.log('🌐 i18n language changed to:', selectedLang);
-
-                const isHebrewLang = selectedLang.startsWith('he');
-                setIsHebrew(isHebrewLang);
-
-                // Configure RTL for the current language
-                I18nManager.allowRTL(isHebrewLang);
-                I18nManager.forceRTL(isHebrewLang);
-                console.log('➡️ RTL configured:', isHebrewLang);
-
-                console.log('✅ Language initialization complete');
-            } catch (error) {
-                console.error('❌ Error initializing language:', error);
-                try {
-                    await AsyncStorage.setItem(STORAGE_KEY, 'he');
-                    await i18n.changeLanguage('he');
-                    setIsHebrew(false);
-                } catch (fallbackError) {
-                    console.error('❌ Error in fallback:', fallbackError);
-                }
-            } finally {
-                setIsReady(true);
-            }
-        };
-
-        initializeLanguage();
-    }, []);
-
-    const toggleLanguage = async () => {
-        try {
-            console.log('🔄 Starting language toggle...');
-            console.log('📍 Current state - isHebrew:', isHebrew);
-
-            const newLang = isHebrew ? 'en' : 'he';
-            const newIsHebrew = !isHebrew;
-
-            await i18n.changeLanguage(newLang);
-            console.log('🌐 i18n language changed to:', newLang);
-
-            await AsyncStorage.setItem(STORAGE_KEY, newLang);
-            console.log('💾 Language saved to storage:', newLang);
-
-            const needsRTL = newLang.startsWith('he');
-            console.log('➡️ Needs RTL:', needsRTL, 'Current RTL:', I18nManager.isRTL);
-
-            if (I18nManager.isRTL !== needsRTL) {
-                // Update state optimistically so UI reflects the intent
-                setIsHebrew(newIsHebrew);
-
-                I18nManager.allowRTL(needsRTL);
-                I18nManager.forceRTL(needsRTL);
-
-                Alert.alert(
-                    'Restart Required',
-                    'The app needs to reload to apply the language direction changes.',
-                    [
-                        {
-                            text: 'OK',
-                            onPress: async () => {
-                                try {
-                                    if (Updates?.reloadAsync) {
-                                        console.log('🔄 Reloading app...');
-                                        await Updates.reloadAsync();
-                                    } else {
-                                        console.warn('⚠️ App reload is not supported in this environment');
-                                    }
-                                } catch (e) {
-                                    console.warn('⚠️ Reload failed:', e);
-                                }
-                            },
-                        },
-                    ],
-                    { cancelable: false }
-                );
-            } else {
-                console.log("✅ RTL state doesn't need to change, updating state only");
-                setIsHebrew(newIsHebrew);
-            }
-        } catch (error) {
-            console.error('❌ Error toggling language:', error);
-            Alert.alert('Error', 'Failed to change language. Please try again.');
+  useEffect(() => {
+    const initializeLanguage = async () => {
+      try {
+        const savedLang = await AsyncStorage.getItem(STORAGE_KEY);
+        const selectedLang = savedLang ?? (i18n.language || "he");
+        if (!savedLang) {
+          await AsyncStorage.setItem(STORAGE_KEY, selectedLang);
         }
+
+        await i18n.changeLanguage(selectedLang);
+        const isHebrewLang = selectedLang.startsWith("he");
+        setIsHebrew(isHebrewLang);
+
+        const rtlConfigured = await AsyncStorage.getItem(RTL_FLAG_KEY);
+
+        if (
+          I18nManager.isRTL !== isHebrewLang &&
+          ((isHebrewLang && rtlConfigured !== "rtl") ||
+            (!isHebrewLang && rtlConfigured !== "ltr"))
+        ) {
+          I18nManager.allowRTL(isHebrewLang);
+          I18nManager.forceRTL(isHebrewLang);
+          await AsyncStorage.setItem(
+            RTL_FLAG_KEY,
+            isHebrewLang ? "rtl" : "ltr"
+          );
+          if (Updates?.reloadAsync) {
+            await Updates.reloadAsync();
+          }
+          // todo only for development!  remove !!!!!!!!
+          I18nManager.allowRTL(true);
+          I18nManager.forceRTL(true);
+          return; // ← No setIsReady(true) if you're reloading!
+        }
+
+        // --------- ⭐️ IF WE GET HERE, WE ARE READY! ⭐️ -------------
+        await AsyncStorage.setItem(RTL_FLAG_KEY, isHebrewLang ? "rtl" : "ltr");
+        setIsReady(true);
+      } catch (error) {
+        console.error("❌ Error initializing language or RTL:", error);
+        setIsReady(true); // Always end with isReady = true in catch
+      }
     };
+    initializeLanguage();
+  }, []);
 
-    if (!isReady) {
-        console.log('⏳ Language context not ready yet...');
-        return null; // TODO: render a Splash/Loader if desired
+  useEffect(() => {
+    if (isReady) {
+      SplashScreen.hideAsync();
     }
+  }, [isReady]);
 
-    return (
-        <LanguageContext.Provider value={{ isHebrew, toggleLanguage }}>
-            {children}
-        </LanguageContext.Provider>
-    );
+  const toggleLanguage = async () => {
+    try {
+      const newLang = isHebrew ? "en" : "he";
+      const newIsHebrew = !isHebrew;
+      await i18n.changeLanguage(newLang);
+      await AsyncStorage.setItem(STORAGE_KEY, newLang);
+      const needsRTL = newLang.startsWith("he");
+      const rtlConfigured = await AsyncStorage.getItem(RTL_FLAG_KEY);
+
+      if (
+        I18nManager.isRTL !== needsRTL &&
+        ((needsRTL && rtlConfigured !== "rtl") ||
+          (!needsRTL && rtlConfigured !== "ltr"))
+      ) {
+        I18nManager.allowRTL(needsRTL);
+        I18nManager.forceRTL(needsRTL);
+        await AsyncStorage.setItem(RTL_FLAG_KEY, needsRTL ? "rtl" : "ltr");
+        Alert.alert(
+          "Restart Required",
+          "The app needs to reload to apply the language direction changes.",
+          [
+            {
+              text: "OK",
+              onPress: async () => {
+                if (Updates?.reloadAsync) {
+                  await Updates.reloadAsync();
+                }
+              },
+            },
+          ],
+          { cancelable: false }
+        );
+      } else {
+        setIsHebrew(newIsHebrew);
+        await AsyncStorage.setItem(RTL_FLAG_KEY, needsRTL ? "rtl" : "ltr");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to change language. Please try again.");
+    }
+  };
+
+  if (!isReady) {
+    return null;
+  } 
+
+  return (
+    <LanguageContext.Provider value={{ isHebrew, toggleLanguage }}>
+      {children}
+    </LanguageContext.Provider>
+  );
 };
-
-
-
-
